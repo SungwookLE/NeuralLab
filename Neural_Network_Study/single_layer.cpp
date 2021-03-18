@@ -30,6 +30,20 @@ void read_csv(std::string file_names, std::vector<std::vector<double>> &group_a,
     return;
 }
 
+void save_csv(std::string file_names, std::vector<std::vector<double>> group_a, std::vector<std::vector<double>> group_b, std::vector<double> label_a, std::vector<double> label_b){
+    std::ofstream filestream(file_names);
+
+    if(filestream.is_open()){
+        filestream << "X0" <<", " << "X1" <<", " << "LABEL" <<", " << "ESTIMATED_LABEL" << ", " << "RAW_SCORE" << std::endl;
+        for (int i =0 ; i < group_a.size(); ++i)
+            filestream<< group_a[i][0] <<", "<< group_a[i][1] <<", "<< group_a[i][2]<<", "<< std::round(label_a[i]) << ", "<< label_a[i] << std::endl;
+
+        for (int i =0 ; i < group_b.size(); ++i)
+            filestream<< group_b[i][0] <<", "<< group_b[i][1] <<", "<< group_b[i][2] <<", "<< std::round(label_b[i])<< ", "<<label_b[i] << std::endl;
+    }
+}
+
+
 double activate_sigmoid(double in){
     double res;
     res = (double)1.0/(1.0+std::exp(-in));
@@ -92,6 +106,23 @@ void backward_propagation(const double output, const double label, const std::ve
         W[1] = W[1] - learning_rate * gradient_W1;
         B = B - learning_rate * gradient_B;
     }
+    else if (opt == "relu"){
+        double net = X[0] * W[0] + X[1]*W[1] + B;
+        if (net >=0){
+            gradient_W0 = -(label - output) * X[0];
+            gradient_W1 = -(label - output) * X[1];
+            gradient_B = -(label - output) * 1;
+            
+            W[0] = W[0] - learning_rate * gradient_W0;
+            W[1] = W[1] - learning_rate * gradient_W1;
+            B = B - learning_rate * gradient_B;
+        }
+        else{
+            W[0] = W[0];
+            W[1] = W[1];
+            B = B;
+        }
+    }
 
     return;
 }
@@ -122,40 +153,42 @@ int main(){
     /* 1. Initialization of Node weights and bias */
     std::vector<double> W = {dist(gen), dist(gen)}; //weights
     double B = dist(gen); //bias
-    
+    std::cout << "Initial={\"W[0]\":" << W[0] << ", "<< "\"W[1]\":" << W[1] << ", " << "\"B\":" << B << "}"<< std::endl;
+
     /* 2. Learning Step with Backpropagation */
-    int iteration= 50;
+    int iteration= 20;
     double learning_rate =0.01;
     for(int iter=0; iter < iteration; ++iter){
         for(int i=0; i<data_set.size(); ++i){
             std::vector<double> res = {data_set.at(i)[0], data_set.at(i)[1]};
             //2-1. FORWARD PROPAGATION
-            double out=forward_propagation(res, W, B, "sigmoid");
+            double out=forward_propagation(res, W, B, "relu");
             //2-2. BACKWARD PROPAGATION
-            backward_propagation(out, data_set.at(i)[2], res, W, B, learning_rate, "sigmoid");
+            backward_propagation(out, data_set.at(i)[2], res, W, B, learning_rate, "relu");
         }   
     }
     
-    std::cout << "W[0]:" << W[0] << ", "<< "W[1]:" << W[1] << ", " << "B:" << B << std::endl;
-    /* 3. Validation with Forwardpropagation */
+    std::cout << "Result={\"W[0]\":" << W[0] << ", "<< "\"W[1]\":" << W[1] << ", " << "\"B\":" << B << "}"<< std::endl;
+    /* 3. Test with Forwardpropagation */
     std::vector<double> out_net;
     for(int i=0; i<data_set.size(); ++i){
         std::vector<double> res = {data_set.at(i)[0], data_set.at(i)[1]};
         //3-1. FORWARD PROPAGATION
-        double out=forward_propagation(res, W, B, "sigmoid");
+        double out=forward_propagation(res, W, B, "relu");
         out_net.push_back(out);
     }
     
     /* 4. SCORE with CSV export */
-    int score =0;
+    int score =0; 
     for(int i =0 ; i < data_set.size(); ++i){
         int label_est = std::round(out_net[i]);
         if (label_est == data_set[i][2])
             score+=1;
     }
-
+    std::vector<double> label_a, label_b;
+    label_a.insert(label_a.begin(), out_net.begin(), out_net.begin()+99);
+    label_b.insert(label_b.begin(), out_net.begin()+100, out_net.end());
+    save_csv("result.csv", group_a, group_b, label_a, label_b);
     std::cout << "VALIDATION(" << score << "/"<< out_net.size() << "): " << (double)score/out_net.size()*100 <<"%"<<std::endl;
     return 0;
 }
-
-// https://github.com/SungwookLE/udacity_TensorFlow_LAB/blob/master/README_backpropa.MD
