@@ -156,15 +156,34 @@ int main(){
     std::cout << "Initial={\"W[0]\":" << W[0] << ", "<< "\"W[1]\":" << W[1] << ", " << "\"B\":" << B << "}"<< std::endl;
 
     /* 2. Learning Step with Backpropagation */
-    int iteration= 20;
-    double learning_rate =0.01;
+    int iteration= 500;
+    double learning_rate =0.05;
     for(int iter=0; iter < iteration; ++iter){
         for(int i=0; i<data_set.size(); ++i){
             std::vector<double> res = {data_set.at(i)[0], data_set.at(i)[1]};
             //2-1. FORWARD PROPAGATION
-            double out=forward_propagation(res, W, B, "relu");
+            double out=forward_propagation(res, W, B, "sigmoid");
             //2-2. BACKWARD PROPAGATION
-            backward_propagation(out, data_set.at(i)[2], res, W, B, learning_rate, "relu");
+            backward_propagation(out, data_set.at(i)[2], res, W, B, learning_rate, "sigmoid");
+        }
+        // DEBUG MONITOR
+        if (iter%100==0){
+            /* DEBUG 1: Test with Forwardpropagation */
+            std::vector<double> out_net;
+            for (int i = 0; i < data_set.size(); ++i) {
+                std::vector<double> res = { data_set.at(i)[0], data_set.at(i)[1] };
+                double out = forward_propagation(res, W, B, "sigmoid");
+                out_net.push_back(out);
+            }
+            /* DEBUG 2: SCORE */
+            int score = 0;
+            for (int i = 0; i < data_set.size(); ++i) {
+                int label_est = std::round(out_net[i]);
+                if (label_est == data_set[i][2])
+                    score += 1;
+            }
+            /*DEBUG 3: PRINT */
+            std::cout << iter<< "th ITERATION(" << score << "/" << out_net.size() << "): " << (double)score / out_net.size() * 100 << "%" << std::endl;
         }   
     }
     
@@ -174,7 +193,7 @@ int main(){
     for(int i=0; i<data_set.size(); ++i){
         std::vector<double> res = {data_set.at(i)[0], data_set.at(i)[1]};
         //3-1. FORWARD PROPAGATION
-        double out=forward_propagation(res, W, B, "relu");
+        double out=forward_propagation(res, W, B, "sigmoid");
         out_net.push_back(out);
     }
     
@@ -186,7 +205,8 @@ int main(){
             score+=1;
     }
     std::vector<double> label_a, label_b;
-    label_a.insert(label_a.begin(), out_net.begin(), out_net.begin()+99);
+    label_a.insert(label_a.begin(), out_net.begin(), out_net.begin()+100);
+    
     label_b.insert(label_b.begin(), out_net.begin()+100, out_net.end());
     save_csv("result.csv", group_a, group_b, label_a, label_b);
     std::cout << "VALIDATION(" << score << "/"<< out_net.size() << "): " << (double)score/out_net.size()*100 <<"%"<<std::endl;

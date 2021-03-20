@@ -27,8 +27,8 @@ Those method can *express the non-linearity about the data, and choose the regio
 * Nonlinear Regression, [Polynomial_Regression](https://wikidocs.net/34065)
 <center><img src="https://wikidocs.net/images/page/34065/TRAIN_POLY.jpeg" width="80%" height="80%"></center>
 
-* Nonlinear Classification: It can be described with [Perceptron]()
-<center><img src="https://lh3.googleusercontent.com/proxy/Z8Z4CIWtTEPEmcJMRYlvrozoKmka7q_Er4XQZAuehbWKUHz0uTa-cJY3iPYGAc7CW6QdSrma3GwtzJWZZVfoQeJc2Dkm-gTOh3xQjjorOQHnDlBHBSYaTTtnqMY6eEmgcsEqzzJxj67bNsOMA0m3cr1NoGkpiNr0eOa7kKZ4y1vAYyI" width="80%" height="80%"></center>
+* Nonlinear Classification: It can be described with `Perceptron`
+<center><img src="https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F994375335A54533C21" width="80%" height="80%"></center>
 
 ### [2-1] Perceptron
 <center><img src="https://image.slidesharecdn.com/lecture29-convolutionalneuralnetworks-visionspring2015-150504114140-conversion-gate02/95/lecture-29-convolutional-neural-networks-computer-vision-spring2015-9-638.jpg?cb=1430740006" width="80%" height="80%"></center>

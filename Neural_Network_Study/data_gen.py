@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import csv
 
 # Prepare data_set
-data_a = np.random.randn(100, 2)
-data_a[(data_a[:, 0] >= -0.1) & (data_a[:, 1] >= -0.1)] = - \
-    0.5 * abs(np.random.rand(1, 2))
+data_a = np.random.randn(100, 2)*10
+data_a[(data_a[:, 0] >= 0) & (data_a[:, 1] >= 0)] = - \
+    0.5 * abs(np.random.rand(1, 2))*10
 
-data_b = np.random.randn(100, 2)
-data_b[(data_b[:, 0] <= 0.1) | (data_b[:, 1] <= 0.1)
-       ] = 0.5 * abs(np.random.rand(1, 2))
+data_b = np.random.randn(100, 2)*10
+data_b[(data_b[:, 0] <= 0) | (data_b[:, 1] <= 0)
+       ] = 0.5 * abs(np.random.rand(1, 2))*10
 
 label_a = np.ones((100, 1))
 label_b = np.zeros((100, 1))
@@ -33,8 +33,8 @@ plt.scatter(group_a[:, 0], group_a[:, 1], color='red',
 plt.scatter(group_b[:, 0], group_b[:, 1], color='blue',
             facecolors='none', label='group_b')
 #plt.tight_layout()
-plt.xlim((-3, 3))
-plt.ylim((-3, 3))
+plt.xlim((-30, 30))
+plt.ylim((-30, 30))
 plt.legend()
 plt.title('Classification Data')
 plt.show()
