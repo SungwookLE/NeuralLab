@@ -4,8 +4,9 @@
 [<img src="http://yaroslavvb.com/upload/notMNIST/nmn.png" alt="notMNIST dataset samples" />](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html)
 
 ## Neural Network Study
-
-
+The readme `md` is [here](./Neural_Network_Study/Study_NeuralNet.md).
+- Dataset for classification problem is given, and design classifier using perceptron layer.
+- Please check the markdown and `c++` and `python` codes for understanding works.
 
 ## The Basic Tensorflow Lab
 
