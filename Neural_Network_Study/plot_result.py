@@ -35,8 +35,8 @@ plt.plot(x_plot, y_plot, 'k-.', linewidth=1.5, label='result')
 """
 
 # INSERT RESULTS (LAYER2)
-Result1={"W_h1[0]":0.126182, "W_h1[1]":-5.30623, "B_h1":-3.2251}
-Result2={"W_h2[0]":1.71375, "W_h2[1]":0.23397, "B_h2":0.375245}
+Result1={"W_h1[0]":0.1349, "W_h1[1]":-4.7613, "B_h1":-2.91058}
+Result2={"W_h2[0]":1.56269, "W_h2[1]":0.0971994, "B_h2":0.62508}
 
 y_plot = -Result1["W_h1[0]"] / Result1["W_h1[1]"] * x_plot - Result1["B_h1"] / Result1["W_h1[1]"]
 plt.plot(x_plot, y_plot, 'r-.', linewidth=1.0, label='h1')
@@ -66,4 +66,5 @@ plt.ylim((-30, 30))
 plt.legend()
 plt.text(-2,-2,str(count) + "/" +str(len(group_a[:,0])+len(group_b[:,0])) + ": " +str(count/(len(group_a[:,0])+len(group_b[:,0]))*100)+"%")
 plt.title('Classification Data')
+#plt.savefig('two_layer.png')
 plt.show()
