@@ -228,6 +228,8 @@ int main(){
 }
 ```
 ### [3-2] Two layer(Neural Network)
+With two features(input), two layer with three perceptrons works for classification.
+![image](net.png)
 This code is here: [two_layer.cpp](two_layer.cpp)
 
 ```c++
