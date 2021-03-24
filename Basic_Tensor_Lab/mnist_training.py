@@ -40,7 +40,7 @@ def logits(features):
     fc = tf.add(tf.matmul(features, weights),biases)
     output = tf.nn.relu(fc)
     
-    return output, weights
+    return output
 
 output = logits(features)
 prediction = tf.nn.softmax(output)    
