@@ -40,6 +40,10 @@ logits = tf.matmul(layer_1, weights['out']) + biases['out']
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
 
+# Class used to save and/or restore Tensor Variables
+saver = tf.train.Saver()
+save_file = './model.ckpt'
+
 # Initializing the variables
 init = tf.global_variables_initializer()
 
@@ -47,8 +51,9 @@ init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
     
-    print("Init: \n")
+    print("Init:")
     print(sess.run(weights['out']))
+    print("\n")
     # Training cycle
     for epoch in range(training_epochs):
         total_batch = int(mnist.train.num_examples/batch_size)
@@ -71,9 +76,9 @@ with tf.Session() as sess:
     # Decrease test_size if you don't have enough memory
     test_size = 256
     print("Accuracy:", accuracy.eval({x: mnist.test.images[:test_size], y: mnist.test.labels[:test_size]}))
+    print("Result:")
     print(sess.run(weights['out']))
+    print("\n")
 
-print("Result: \n")
-with tf.Session() as sess:
-    print(sess.run(weights['out']))
-    
+    # Save the model
+    saver.save(sess, save_file)
