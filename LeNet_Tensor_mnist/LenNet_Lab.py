@@ -102,12 +102,34 @@ def LeNet(x):
     # Sub: Pooling. Input = 10x10x16, Output = 5x5x16
     pool_layer2 = tf.nn.avg_pool(conv_layer2, ksize=[1,2,2,1], strides=[1,2,2,1], padding='VALID')
 
+    # Flatten To Fully Connected Layer. Input = 5x5x16, Output = 400
+    neural_feed = flatten(pool_layer2)
 
+    # Layer 3: Fully Connected, Input = 400, Output = 120
+    weight_fc_layer3 = tf.Variable(tf.truncated_normal([400,120], mean=mu, stddev=sigma))
+    bias_fc_layer3 = tf.Variable(tf.zeros(120))
 
+    fc_layer3 = tf.matmul(neural_feed, weight_fc_layer3)
+    fc_layer3 = tf.nn.bias_add(fc_layer3, bias_fc_layer3)
+    fc_layer3 = tf.nn.relu(fc_layer3)
 
+    # Layer 4: Fully Connected, Input = 120, Output = 84
+    weight_fc_layer4 = tf.Variable(tf.truncated_normal([120,84], mean=mu, stddev=sigma))
+    bias_fc_layer4 = tf.Variable(tf.zeros(84))
 
+    fc_layer4 = tf.matmul(fc_layer3, weight_fc_layer4)
+    fc_layer4 = tf.nn.bias_add(fc_layer4, bias_fc_layer4)
+    fc_layer4 = tf.nn.relu(fc_layer4)
 
+    # Layer 5: Fully Connected, Input = 84, Output = 10
+    weight_fc_layer5 = tf.Variable(tf.truncated_normal([84,10], mean=mu, stddev=sigma))
+    bias_fc_layer5 = tf.Variable(tf.zeros(10))
 
-    return pool_layer2
+    fc_layer5 = tf.matmul(fc_layer4, weight_fc_layer5)
+    fc_layer5 = tf.nn.bias_add(fc_layer5, bias_fc_layer5)
+
+    logits = fc_layer5
+
+    return logits
 
 print(LeNet(X_train).shape)
