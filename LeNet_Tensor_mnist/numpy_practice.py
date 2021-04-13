@@ -11,7 +11,6 @@ a = np.array((
 
 ))
 
-a = np.vstack((a,a))
 
 print(a)
 print(a.shape)

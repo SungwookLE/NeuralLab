@@ -76,14 +76,24 @@ Return the result of the 2nd fully connected layer.
 
 from tensorflow.contrib.layers import flatten
 
+#FOR DISPLAYING THE PARAMETER, THOSE Variables are definead out of LeNet(x)
+weight_conv_layer1 = tf.Variable(tf.truncated_normal([2,2,1,6], mean=0, stddev= 0.1))
+bias_conv_layer1 = tf.Variable(tf.zeros(6))
+
+sess= tf.InteractiveSession()
+weight_conv_layer1.initializer.run()
+bias_conv_layer1.initializer.run()
+print("DISPLAY PARAMETER(INIT): ")
+print("WEIGHT OF CONV LAYER1")
+print(weight_conv_layer1.eval())
+print("BIAS OF CONV LAYER1")
+print(bias_conv_layer1.eval())
+
 def LeNet(x):
     mu = 0 
     sigma = 0.1
     
     # Layer 1: Convolutional. Input = 32x32x1, Output = 28x28x6.
-    weight_conv_layer1 = tf.Variable(tf.truncated_normal([5,5,1,6], mean=mu, stddev= sigma))
-    bias_conv_layer1 = tf.Variable(tf.zeros(6))
-
     conv_layer1= tf.nn.conv2d(x,weight_conv_layer1, strides=[1,1,1,1], padding = 'VALID')
     conv_layer1= tf.nn.bias_add(conv_layer1, bias_conv_layer1)
     conv_layer1 = tf.nn.relu(conv_layer1) #Activation: Relu
@@ -133,3 +143,91 @@ def LeNet(x):
     return logits
 
 print(LeNet(X_train).shape)
+
+############################################################################################################ Features and Labels
+'''
+Train LeNet to classify MNIST data
+x is a placeholder for a batch of input images. y is a placeholder for a batch of output labels
+'''
+
+x = tf.placeholder(tf.float32, (None, 32,32,1))
+y = tf.placeholder(tf.int32, (None))
+one_hot_y = tf.one_hot(y, 10)
+
+############################################################################################################ Training Pipeline
+'''
+Create a training pipeline that uses the model to classify MNIST data
+'''
+rate = 0.001
+logits = LeNet(x)
+Cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels = one_hot_y, logits = logits)
+loss_operation = tf.reduce_mean(Cross_entropy)
+optimizer = tf.train.AdamOptimizer(learning_rate = rate)
+training_operation = optimizer.minimize(loss_operation)
+
+############################################################################################################ Model Evaluation
+
+correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
+accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+def evaluate(X_data, y_data):
+    num_examples = len(X_data)
+    total_accuracy = 0
+    sess = tf.get_default_session()
+    for offset in range(0, num_examples, BATCH_SIZE):
+        batch_x, batch_y = X_data[offset:offset+BATCH_SIZE], y_data[offset:offset+BATCH_SIZE]
+        accuracy = sess.run(accuracy_operation, feed_dict = {x: batch_x, y: batch_y})
+        total_accuracy += (accuracy * len(batch_x))
+    return total_accuracy/ num_examples
+
+############################################################################################################ Train the MOodel
+'''
+Run the trainning data through the training pipeline to train the model
+Before each epoch, shuffle thr trainning set.
+After each epoch, measure the loss and accuracy of the validation set.
+'''
+saver = tf.train.Saver()
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    num_examples = len(X_train)
+
+    print("Trainnig...")
+    print()
+    for i in range(EPOCHS):
+        X_train, y_train = shuffle(X_train, y_train)
+        for offset in range(0, num_examples, BATCH_SIZE):
+            end = offset+BATCH_SIZE
+            batch_x, batch_y = X_train[offset:end], y_train[offset:end]
+            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
+
+        validation_accuracy = evaluate(X_validation ,y_validation)
+        print("EPOCH {} ...".format(i+1))
+        print("Validation Accuracy = {:.3f}".format(validation_accuracy))
+        print()
+
+    saver.save(sess, './lenet')
+    print("Model saved")
+
+
+sess= tf.InteractiveSession()
+weight_conv_layer1.initializer.run()
+bias_conv_layer1.initializer.run()
+print("DISPLAY PARAMETER(AFTER): ")
+print("WEIGHT OF CONV LAYER1")
+print(weight_conv_layer1.eval())
+print("BIAS OF CONV LAYER1")
+print(bias_conv_layer1.eval())
+
+
+############################################################################################################ Evaluate the Model
+
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    test_accuracy = evaluate(X_test, y_test)
+    print("Test Accuracy = {:.3f}".format(test_accuracy))
+
+plt.show()
+
+#USEFUL TOOL FUNCTION TO FIGURE OUT THE TENSOR VARIABLE
+#https://pythonkim.tistory.com/62
+#테스트 이미지 넣어서 이미지가 어떻게 학습되엇는지 결과 표출해주는 것 해놓자.
