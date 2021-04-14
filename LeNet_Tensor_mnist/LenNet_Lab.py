@@ -239,3 +239,6 @@ with tf.Session() as sess:
     print("Test Accuracy = {:.3f}".format(test_accuracy))
 
 plt.show()
+
+
+# SOME ADDITIONAL REF: https://tensorflowkorea.gitbooks.io/tensorflow-kr/content/g3doc/tutorials/mnist/pros/
