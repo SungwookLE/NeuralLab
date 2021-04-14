@@ -19,6 +19,7 @@ However, the LeNet architecture only accepts 32x32xC images, where C is the numb
 In order to reformat the MNIST data into a shape that LeNet will accept, we pad the data with two rows of zeros on the top and bottom, and two columns of zeros on the left and right (28+2+2 = 32).
 You do not need to modify this section.
 '''
+
 import numpy as np
 # Pad images with 0(zeros)
 X_train      = np.pad(X_train, ((0,0),(2,2),(2,2),(0,0)), 'constant')
@@ -43,13 +44,11 @@ print(y_train[index])
 from sklearn.utils import shuffle
 X_train, y_train = shuffle(X_train, y_train)
 
-
 ############################################################################################################ Setup TensorFlow
 import tensorflow as tf
 
 EPOCHS = 10
 BATCH_SIZE = 120
-
 ############################################################################################################ Implement LeNet-5
 # VERY GOOD REFERENCE: http://yann.lecun.com/exdb/lenet/
 
@@ -75,19 +74,15 @@ Return the result of the 2nd fully connected layer.
 '''
 
 from tensorflow.contrib.layers import flatten
+import tensor_monitor_cunstom
 
 #FOR DISPLAYING THE PARAMETER, THOSE Variables are definead out of LeNet(x)
 weight_conv_layer1 = tf.Variable(tf.truncated_normal([2,2,1,6], mean=0, stddev= 0.1))
 bias_conv_layer1 = tf.Variable(tf.zeros(6))
 
-sess= tf.InteractiveSession()
-weight_conv_layer1.initializer.run()
-bias_conv_layer1.initializer.run()
-print("DISPLAY PARAMETER(INIT): ")
-print("WEIGHT OF CONV LAYER1")
-print(weight_conv_layer1.eval())
-print("BIAS OF CONV LAYER1")
-print(bias_conv_layer1.eval())
+print("BEFORE: ")
+tensor_monitor_cunstom.showVariable(weight_conv_layer1)
+tensor_monitor_cunstom.showVariable(bias_conv_layer1)
 
 def LeNet(x):
     mu = 0 
@@ -208,18 +203,35 @@ with tf.Session() as sess:
     saver.save(sess, './lenet')
     print("Model saved")
 
+print("AFTER: ")
+tensor_monitor_cunstom.showVariable(weight_conv_layer1)
+tensor_monitor_cunstom.showVariable(bias_conv_layer1)
 
-sess= tf.InteractiveSession()
-weight_conv_layer1.initializer.run()
-bias_conv_layer1.initializer.run()
-print("DISPLAY PARAMETER(AFTER): ")
-print("WEIGHT OF CONV LAYER1")
-print(weight_conv_layer1.eval())
-print("BIAS OF CONV LAYER1")
-print(bias_conv_layer1.eval())
+############################################################################################################ TESTING the Model
+#테스트 이미지 한장만 샘플로 넣어서 이미지가 어떻게 학습되엇는지 결과 표출
 
+image = X_train[index].squeeze()
+plt.imshow(image, cmap="gray")
+
+sample = X_train[index]
+sample = sample[np.newaxis]
+print(sample.shape)
+
+def one_feed_sampling_test(X_data, index):
+    sess = tf.get_default_session()
+    raw_labels = sess.run(logits, feed_dict = {x: sample})
+    predict_labels = sess.run(tf.argmax(raw_labels,1))
+
+    return raw_labels, predict_labels
+
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    raw_labels, predict_labels = one_feed_sampling_test(X_train, index)
+    print("RESULT(LABELS): ", raw_labels.squeeze())
+    print("PREDICT: ",predict_labels.squeeze())
 
 ############################################################################################################ Evaluate the Model
+#TEST SET ALL EVALUATE
 
 with tf.Session() as sess:
     saver.restore(sess, tf.train.latest_checkpoint('.'))
@@ -227,7 +239,3 @@ with tf.Session() as sess:
     print("Test Accuracy = {:.3f}".format(test_accuracy))
 
 plt.show()
-
-#USEFUL TOOL FUNCTION TO FIGURE OUT THE TENSOR VARIABLE
-#https://pythonkim.tistory.com/62
-#테스트 이미지 넣어서 이미지가 어떻게 학습되엇는지 결과 표출해주는 것 해놓자.
