@@ -1,4 +1,5 @@
 import tensorflow as tf
+#https://pythonkim.tistory.com/62
 
 def showConstant(t):
     sess = tf.InteractiveSession()
