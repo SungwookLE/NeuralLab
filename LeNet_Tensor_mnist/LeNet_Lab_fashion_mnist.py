@@ -201,7 +201,7 @@ with tf.Session() as sess:
 
 with tf.Session() as sess:
     saver = tf.train.import_meta_graph('lenet_fashion.meta')
-    saver.restore(sess, tf.train.latest_checkpoint('./'))
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
     test_accuracy = evaluate(X_test, y_test)
     print("Test Accuracy = {:.3f}".format(test_accuracy))
 
