@@ -17,6 +17,7 @@
 - Techniqcs (Dropout, Pooling, 1x1 Convolution, Inception , ... )
 
 ## [3] Using Tensorflow, Implementation
+- tensorflow usage (session, tensor.Variable, tensor.Constant, tensor.placeholder)
 - mnist dataset / fashion_mnist dataset
 
-## Future: Keras with traffic-sign classifier, Behavior-clonning (steering angle regression)
+## Future: Keras with traffic-sign classifier, Behavior-clonning (Steering angle regression)
