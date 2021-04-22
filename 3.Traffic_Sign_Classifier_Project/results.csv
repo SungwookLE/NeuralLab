@@ -1,0 +1,3 @@
+,Predicted,Label,Logits(top_k),Class(top_k)
+1,Wild animals crossing,Speed limit (100km/h),[3.1244564 3.0989215 2.3724475],[31  7  8]
+2,Turn left ahead,Turn left ahead,[2.5799854 2.2452772 1.8999631],[34 38 37]
