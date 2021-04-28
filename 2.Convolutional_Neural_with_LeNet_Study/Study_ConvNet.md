@@ -98,8 +98,9 @@ Image features are extracted through the convolution layer. With various techniq
 
 - Convolution Layer Operation
 <img src="https://video.udacity-data.com/topher/2016/November/58377d67_vlcsnap-2016-11-24-15h52m47s438/vlcsnap-2016-11-24-15h52m47s438.png" width="50%">
+
 |**Dimensionality Study**||
-|:---|:---:|
+|:---|:---|
 |**1) Given**||
 |Input layer size| Width=W, Height=H|
 |Convolution filter size| F|
@@ -159,7 +160,7 @@ conv_layer = tf.nn.relu(conv_layer)
     hidden_layer = tf.nn.dropout(hidden_layer, keep_prob)
     # keep prob usually set as 0.5~0.8 for trainning process
     ```
-1-1. L2 Regularization (for parameter regularization)
+    1-1. L2 Regularization (for parameter regularization)
 [Lecture Youtube](https://img.youtu.be/QcJBhbuCl5g?t=56)
     
     1-2. Learning rate scheduling
