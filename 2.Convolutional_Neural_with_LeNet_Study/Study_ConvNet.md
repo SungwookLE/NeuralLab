@@ -12,6 +12,7 @@
 [4] Michael Neilsen's [free book](http://neuralnetworksanddeeplearning.com/)
 [5] Goodfellow, Bengio, and Courville's more advanced [free book](https://www.deeplearningbook.org/) on Deep Learning
 [6] Paper [Visualizing and Understanding Deep Neural Networks](https://arxiv.org/abs/1311.2901)
+[7] Official Tensorflow [homepage](https://www.tensorflow.org/tutorials)
 
 ### HOW TO EXECUTE
 * Dependencies: This lab requires(Conda environment)`-`[CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
@@ -194,8 +195,114 @@ conv_layer = tf.nn.relu(conv_layer)
   (b) is can reduce the dimension using 1x1 convolution: [REF.](https://kangbk0120.github.io/articles/2018-01/inception-googlenet-review)
 
 
-## [3] Using Tensorflow, Implementation
-- tensorflow usage (session, tensor.Variable, tensor.Constant, tensor.placeholder)
-- mnist dataset / fashion_mnist dataset
+## [3] Using Tensorflow, Implemente the Architecture, Traing Pipeline with Tensorflow Session(Graph)
+First of all, there are many helpful documents such as [official tutorial](https://www.tensorflow.org/tutorials), [tf1 github repo](https://github.com/tensorflow/docs/tree/master/site/en/r1).
 
-## Future: Keras with traffic-sign classifier, Behavior-clonning (Steering angle regression)
+* tf.Session: [Check Here](https://chan-lab.tistory.com/6)
+Session is gate to enter the tensorflow framework. When running the tensor framework, define the `tf.Session()` or `tf.InteractiveSession()` up to purpose.
+
+* tf.Variable , tf.Constant, tf.placeholder: 
+Weight, bias parameters must be defined as `tf.Variable`. `tf.Variable` makes those variables are learned while training process.  
+`tf.Constatns` is method to define constant valus in tensor
+`tf.placeholder` defines the feed data to architecture.
+```python
+#sample
+x = tf.placeholder(tf.float32, (None, 32,32,1))
+y = tf.placeholder(tf.int32, (None))
+one_hot_y = tf.one_hot(y, 10) #this is for one-hot encoding
+```
+* TF training pipeline sample
+```python
+#sample
+rate = 0.001
+logits = LeNet(x)
+Cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels = one_hot_y, logits = logits)
+loss_operation = tf.reduce_mean(Cross_entropy)
+optimizer = tf.train.AdamOptimizer(learning_rate = rate)
+training_operation = optimizer.minimize(loss_operation)
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    num_examples = len(X_train)
+
+    print("Trainnig...")
+    print()
+    for i in range(EPOCHS):
+        X_train, y_train = shuffle(X_train, y_train)
+        for offset in range(0, num_examples, BATCH_SIZE):
+            end = offset+BATCH_SIZE
+            batch_x, batch_y = X_train[offset:end], y_train[offset:end]
+            sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
+
+        validation_accuracy = evaluate(X_test ,y_test)
+        print("EPOCH {} ...".format(i+1))
+        print("Validation Accuracy = {:.3f}".format(validation_accuracy))
+```  
+  
+* Deep Learning Architecture Sample
+```python
+#sample
+def LeNet(x):
+    mu = 0
+    sigma = 0.1
+
+    # Layer 1: Convolutional. Input = 32x32x1, Output = 28x28x6.
+    weight_conv_layer1 = tf.Variable(tf.truncated_normal([2,2,1,6], mean = mu, stddev = sigma))
+    bias_conv_layer1 = tf.Variable(tf.zeros(6))
+
+    conv_layer1= tf.nn.conv2d(x, weight_conv_layer1, strides=[1,1,1,1], padding = 'VALID')
+    conv_layer1= tf.nn.bias_add(conv_layer1, bias_conv_layer1)
+    conv_layer1 = tf.nn.relu(conv_layer1) #Activation: Relu
+
+    # Sub: Pooling. Input = 28x28x6, Output = 14x14x6
+    pool_layer1 = tf.nn.max_pool(conv_layer1, ksize=[1,2,2,1], strides=[1,2,2,1], padding ='VALID')
+
+    # Layer 2: Convolutional, Input = 14x14x6, Output = 10x10x16.
+    weight_conv_layer2 = tf.Variable(tf.truncated_normal([5,5,6,16], mean=mu, stddev= sigma))
+    bias_conv_layer2 = tf.Variable(tf.zeros(16))
+
+    conv_layer2= tf.nn.conv2d(pool_layer1, weight_conv_layer2, strides=[1,1,1,1], padding='VALID')
+    conv_layer2= tf.nn.bias_add(conv_layer2, bias_conv_layer2)
+    conv_layer2= tf.nn.relu(conv_layer2) #Activation: Relu
+
+    # Sub: Pooling. Input = 10x10x16, Output = 5x5x16
+    pool_layer2 = tf.nn.avg_pool(conv_layer2, ksize=[1,2,2,1], strides=[1,2,2,1], padding='VALID')
+
+    # Flatten To Fully Connected Layer. Input = 5x5x16, Output = 400
+    neural_feed = flatten(pool_layer2)
+
+    # Layer 3: Fully Connected, Input = 400, Output = 120
+    weight_fc_layer3 = tf.Variable(tf.truncated_normal([400,120], mean=mu, stddev=sigma))
+    bias_fc_layer3 = tf.Variable(tf.zeros(120))
+
+    fc_layer3 = tf.matmul(neural_feed, weight_fc_layer3)
+    fc_layer3 = tf.nn.bias_add(fc_layer3, bias_fc_layer3)
+    fc_layer3 = tf.nn.relu(fc_layer3)
+
+    # Layer 4: Fully Connected, Input = 120, Output = 84
+    weight_fc_layer4 = tf.Variable(tf.truncated_normal([120,84], mean=mu, stddev=sigma))
+    bias_fc_layer4 = tf.Variable(tf.zeros(84))
+
+    fc_layer4 = tf.matmul(fc_layer3, weight_fc_layer4)
+    fc_layer4 = tf.nn.bias_add(fc_layer4, bias_fc_layer4)
+    fc_layer4 = tf.nn.relu(fc_layer4)
+
+    # Layer 5: Fully Connected, Input = 84, Output = 10
+    weight_fc_layer5 = tf.Variable(tf.truncated_normal([84,10], mean=mu, stddev=sigma))
+    bias_fc_layer5 = tf.Variable(tf.zeros(10))
+
+    fc_layer5 = tf.matmul(fc_layer4, weight_fc_layer5)
+    fc_layer5 = tf.nn.bias_add(fc_layer5, bias_fc_layer5)
+
+    logits = fc_layer5
+
+    return logits
+```
+
+- (1) Number Classifier: `python LeNet_Lab_mnist.py` or `execute LeNet_studying.ipynb`
+(`ipynb` file will be easier to execute step by step...)
+- (2) Cloth Classifier: `python LeNet_Lab_fashion_mnist.py`
+
+## Next Study Subject(More Practice):
+ 1) Keras with traffic-sign classifier
+ 2) Behavior-clonning (Steering angle regression)
