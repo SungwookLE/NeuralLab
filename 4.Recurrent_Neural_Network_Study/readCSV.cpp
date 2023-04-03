@@ -24,3 +24,17 @@ void read_csv(std::string file_names, std::vector<double> &time, std::vector<dou
 
     return;
 }
+
+
+void save_csv(std::string file_names, vector<double> hat_Y, vector<double> Y){
+    std::ofstream filestream(file_names);
+
+    if (filestream.is_open())
+    {
+        filestream << "hat_Y" << ", " << "Y" << endl;
+         for (int i = 0 ; i < hat_Y.size(); ++i){
+            filestream << hat_Y[i] << ", " << Y[i] << endl;
+         }
+    }
+
+}
