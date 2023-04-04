@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # 1. Prepare TimeSeries dataSet
     time = np.arange(0, 10, step=0.1).reshape(-1,1)
     noise_acc = np.random.randn(time.size,1)*0.1
-    noise_pos = np.random.randn(time.size,1)*0.5
+    noise_pos = np.random.randn(time.size,1)*0.2
     init_vel = 10
 
     acc = np.sin(2*math.pi*0.2*time)*5 + noise_acc
@@ -17,6 +17,8 @@ if __name__ == "__main__":
     vel_GT = np.add.accumulate(0.1*np.sin(2*math.pi*0.2*time)*5) + init_vel
 
     
+    pos = pos / np.linalg.norm(pos) * 50# need to be normalized ?
+
     data_set = np.concatenate((time, acc, pos, vel_GT), axis=1)
     print(data_set.shape)
 
