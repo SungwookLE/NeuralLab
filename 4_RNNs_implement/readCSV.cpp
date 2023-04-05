@@ -1,7 +1,7 @@
 // DON'T HAVE TO TOUCH
 #include "readCSV.h"
 
-void read_csv(std::string file_names, std::vector<double> &time, std::vector<double> &acc, std::vector<double> &pos, std::vector<double>&vel_gt)
+void read_csv(std::string file_names, std::vector<double> &time, std::vector<double> &acc, std::vector<double> &pos, std::vector<double> &vel_gt)
 {
     std::ifstream filestream(file_names);
     if (filestream.is_open())
@@ -25,30 +25,18 @@ void read_csv(std::string file_names, std::vector<double> &time, std::vector<dou
     return;
 }
 
-
-void transpose(vector<vector<double>> &X)
+void save_csv(std::string file_names, vector<double> hat_Y, vector<double> Y)
 {
-    vector<vector<double>> trans_X(X[0].size(), vector<double>());
-    for (int i = 0; i < X.size(); ++i)
-    {
-        for (int j = 0; j < X[i].size(); ++j)
-        {
-            trans_X[j].push_back(X[i][j]);
-        }
-    }
-    X = trans_X;
-    return;
-}
-
-void save_csv(std::string file_names, vector<double> hat_Y, vector<double> Y){
     std::ofstream filestream(file_names);
 
     if (filestream.is_open())
     {
-        filestream << "hat_Y" << ", " << "Y" << endl;
-         for (int i = 0 ; i < hat_Y.size(); ++i){
+        filestream << "hat_Y"
+                   << ", "
+                   << "Y" << endl;
+        for (int i = 0; i < hat_Y.size(); ++i)
+        {
             filestream << hat_Y[i] << ", " << Y[i] << endl;
-         }
+        }
     }
-
 }

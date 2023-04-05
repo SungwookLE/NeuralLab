@@ -1,12 +1,19 @@
 
-## Forward equation
+# 1. RNN: One-To-One Case
+
+## 1-1. Forward equation
 
 - $net_{H_t} = X_t*W_x + out_{H_{t-1}}*W_h + B_x$
 - $out_{H_t} = tanh(net_{H_t})$
 - $\hat Y_t = out_{H_t}*W_y + B_y$
 - $Loss_t = 0.5*(\hat {Y_t}-Y_t)^2$
 
-## Gradients (BPTT)
+## 1-2. Graph Memorization 
+- Save 10 heap (at forwarad_step)
+    - out_Ht, out_Ht-1, out_Ht-2, out_Ht-3, out_Ht-4, out_Ht-5, out_Ht-6, out_Ht-7, out_Ht-8, out_Ht-9
+    - X_t, Xt-1, Xt-2, Xt-3, Xt-4, Xt-5, Xt-6, Xt-7, Xt-8, Xt-9
+
+## 1-3. Gradients (BPTT)
 1. Wy
 ```
 aLt      aLt        a(hat_Yt)
@@ -54,10 +61,5 @@ a(Wh)   a(hat_Yt)   a(out_Ht)    a(net_Ht)   a(Wh)          a(hat_Yt)   a(out_Ht
         
         +  (hat_Yt-Yt) * Wy * (1-out_Ht)(1+out_Ht) * Wh * (1-out_Ht-1)(1+out_Ht-1) * Wh * (1-out_Ht-2)(1+out_Ht-2) * out_Ht-3
 ```
-
-## Graph Strategy 
-- Save 10 heap (Queue)
-    - [@forward_step] out_Ht, out_Ht-1, out_Ht-2, out_Ht-3, out_Ht-4, out_Ht-5, out_Ht-6, out_Ht-7, out_Ht-8, out_Ht-9
-    - X_t, Xt-1, Xt-2, Xt-3, Xt-4, Xt-5, Xt-6, Xt-7, Xt-8, Xt-9
 
 

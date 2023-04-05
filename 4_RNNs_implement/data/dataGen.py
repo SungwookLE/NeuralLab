@@ -16,9 +16,6 @@ if __name__ == "__main__":
     pos = np.add.accumulate(0.1*vel) + noise_pos
     vel_GT = np.add.accumulate(0.1*np.sin(2*math.pi*0.2*time)*5) + init_vel
 
-    
-    pos = pos / np.linalg.norm(pos) * 50# need to be normalized ?
-
     data_set = np.concatenate((time, acc, pos, vel_GT), axis=1)
     print(data_set.shape)
 
