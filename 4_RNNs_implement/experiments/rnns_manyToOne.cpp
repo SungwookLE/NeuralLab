@@ -3,7 +3,7 @@
 class RNNs
 {
 public:
-    // RNNs Type: One(Xt) to One(Yt)
+    // RNNs Type: Many(Xt) to One(Yt)
     RNNs(int _nStates, int _nUnits, double _lr)
     {
         nStates = _nStates;
@@ -216,33 +216,22 @@ private:
 
 int main()
 {
-    RNNs model(2, 200, 0.0002);
-
     vector<double> time, acc, pos, vel_gt;
-    read_csv("data/dataSet.csv", time, acc, pos, vel_gt);
+    read_csv("data/dataSetTest.csv", time, acc, pos, vel_gt);
     preprocessing::normalized(pos, 5); //  Preprocessing: Increased predict performance after 'pos' normalized and scaled similar to 'acc' (23.4/5)
     vector<vector<double>> X;          // prepare input X
     X.push_back(acc);
     X.push_back(pos);
-    preprocessing::transpose(X);
+    int manyWindow = 4;
+    preprocessing::transpose_many(X, manyWindow);
+
+    RNNs model(8, 200, 0.0002); // numberOfState = 4x2 = 8
     model.train(X, vel_gt, 20);
 
     vector<double> hat_Y;
     hat_Y = model.inference(X);
     model.monitoring(hat_Y, vel_gt);
-    save_csv("result/rnn.csv", hat_Y, vel_gt);
-
-    time.clear(), acc.clear(), pos.clear(), vel_gt.clear(), X.clear();
-    read_csv("data/dataSetTest.csv", time, acc, pos, vel_gt);
-    preprocessing::normalized(pos, 5);
-    X.push_back(acc);
-    X.push_back(pos);
-    preprocessing::transpose(X);
-
-    hat_Y.clear();
-    hat_Y = model.inference(X);
-    model.monitoring(hat_Y, vel_gt);
-    save_csv("result/rnnTest.csv", hat_Y, vel_gt);
+    save_csv("result/rnn_manyToOne.csv", hat_Y, vel_gt);
 
     return 0;
 }
