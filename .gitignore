@@ -1,3 +1,4 @@
 *.out
 *.exe
-5_torch_study/
+5_torch_study/*.ipynb
+data/*
