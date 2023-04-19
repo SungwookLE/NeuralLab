@@ -2,3 +2,4 @@
 *.exe
 5_torch_study/*.ipynb
 data/*
+*.pth
