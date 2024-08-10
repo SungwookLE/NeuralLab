@@ -6,7 +6,7 @@
 ## 1. DNNs implementation (`C++`)
 - Project: Divide {X,Y} Class
     - Perceptron, DNNs
-    - [NOTE](./1_DNNs_implement/assets/studyNote.md.md)
+    - [NOTE](./1_DNNs_implement/assets/studyNote.md)
 
 ## 2. CNNs framework (`Python`)
 - Projcet: Divide Mnist, TrafficSign Class
